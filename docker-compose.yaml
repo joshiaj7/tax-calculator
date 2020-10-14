@@ -1,0 +1,35 @@
+version: "2.4"
+
+services:
+  tax_calculator:
+    container_name: tax_calculator
+    image: tax-calculator:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+    network_mode: host
+    restart: on-failure
+    depends_on:
+      item_db:
+        condition: service_healthy
+  item_db:
+    container_name: item_db
+    image: postgres:13.0-alpine
+    environment:
+      POSTGRES_PASSWORD: password123
+    ports:
+      - 5432:5432
+    network_mode: host
+    volumes:
+      - postgres-volume:/var/lib/postgres/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres-volume:
