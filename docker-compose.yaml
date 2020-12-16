@@ -15,7 +15,7 @@ services:
       item_db:
         condition: service_healthy
   item_db:
-    container_name: item_db
+    container_name: item_psdb
     image: postgres:13.0-alpine
     environment:
       POSTGRES_PASSWORD: password123
