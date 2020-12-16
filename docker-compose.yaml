@@ -14,6 +14,7 @@ services:
     depends_on:
       item_db:
         condition: service_healthy
+    env_file: ./.env 
   item_db:
     container_name: item_psdb
     image: postgres:13.0-alpine

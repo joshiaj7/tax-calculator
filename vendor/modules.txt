@@ -22,6 +22,10 @@ github.com/jackc/pgx/v4/stdlib
 github.com/jinzhu/inflection
 # github.com/jinzhu/now v1.1.1
 github.com/jinzhu/now
+# github.com/joho/godotenv v1.3.0
+github.com/joho/godotenv
+# github.com/kelseyhightower/envconfig v1.4.0
+github.com/kelseyhightower/envconfig
 # golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 golang.org/x/crypto/pbkdf2
 # golang.org/x/text v0.3.3
@@ -41,11 +45,9 @@ golang.org/x/text/width
 # golang.org/x/xerrors v0.0.0-20191204190536-9bdfabe68543
 golang.org/x/xerrors
 golang.org/x/xerrors/internal
-# gorm.io/driver/postgres v1.0.2
-## explicit
+# gorm.io/driver/postgres v1.0.5
 gorm.io/driver/postgres
-# gorm.io/gorm v1.20.2
-## explicit
+# gorm.io/gorm v1.20.8
 gorm.io/gorm
 gorm.io/gorm/callbacks
 gorm.io/gorm/clause

@@ -170,6 +170,8 @@ func (schema *Schema) ParseField(fieldStruct reflect.StructField) *Field {
 
 	if val, ok := field.TagSettings["NOT NULL"]; ok && utils.CheckTruth(val) {
 		field.NotNull = true
+	} else if val, ok := field.TagSettings["NOTNULL"]; ok && utils.CheckTruth(val) {
+		field.NotNull = true
 	}
 
 	if val, ok := field.TagSettings["UNIQUE"]; ok && utils.CheckTruth(val) {
@@ -328,7 +330,7 @@ func (schema *Schema) ParseField(fieldStruct reflect.StructField) *Field {
 
 			cacheStore := &sync.Map{}
 			cacheStore.Store(embeddedCacheKey, true)
-			if field.EmbeddedSchema, err = Parse(fieldValue.Interface(), cacheStore, embeddedNamer{Table: schema.Table, Namer: schema.namer}); err != nil {
+			if field.EmbeddedSchema, err = getOrParse(fieldValue.Interface(), cacheStore, embeddedNamer{Table: schema.Table, Namer: schema.namer}); err != nil {
 				schema.err = err
 			}
 
@@ -760,13 +762,15 @@ func (field *Field) setupValuerAndSetter() {
 				// pointer scanner
 				field.Set = func(value reflect.Value, v interface{}) (err error) {
 					reflectV := reflect.ValueOf(v)
-					if reflectV.Type().AssignableTo(field.FieldType) {
+					if !reflectV.IsValid() {
+						field.ReflectValueOf(value).Set(reflect.New(field.FieldType).Elem())
+					} else if reflectV.Type().AssignableTo(field.FieldType) {
 						field.ReflectValueOf(value).Set(reflectV)
 					} else if reflectV.Kind() == reflect.Ptr {
-						if reflectV.IsNil() {
+						if reflectV.IsNil() || !reflectV.IsValid() {
 							field.ReflectValueOf(value).Set(reflect.New(field.FieldType).Elem())
 						} else {
-							err = field.Set(value, reflectV.Elem().Interface())
+							return field.Set(value, reflectV.Elem().Interface())
 						}
 					} else {
 						fieldValue := field.ReflectValueOf(value)

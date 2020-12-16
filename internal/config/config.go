@@ -11,11 +11,11 @@ import (
 )
 
 type config struct {
-	hostname string `envconfig:"HOSTNAME"`
-	user     string `envconfig:"USER"`
-	password string `envconfig:"PASSWORD"`
-	dbName   string `envconfig:"NAME"`
-	port     string `envconfig:"PORT"`
+	Hostname string `envconfig:"HOSTNAME"`
+	User     string `envconfig:"USER"`
+	Password string `envconfig:"PASSWORD"`
+	DbName   string `envconfig:"NAME"`
+	Port     string `envconfig:"PORT"`
 }
 
 // DB for global use
@@ -23,14 +23,20 @@ var DB *gorm.DB
 
 // SetupDB to setup db
 func SetupDB() (err error) {
-	godotenv.Load(".env")
+	err = godotenv.Load(".env")
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	var c config
 	err = envconfig.Process("DB", &c)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	format := "host=%s user=%s password=%s dbname=%s port=%s sslmode=disable"
 
-	dsn := fmt.Sprintf(format, c.hostname, c.user, c.password, c.dbName, c.port)
+	dsn := fmt.Sprintf(format, c.Hostname, c.User, c.Password, c.DbName, c.Port)
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
